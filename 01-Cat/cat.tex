@@ -1,0 +1,267 @@
+\documentclass[english,12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{libertine}
+\usepackage{libertinust1math}
+\usepackage[T1]{fontenc}
+
+\usepackage[margin=1in]{geometry}
+
+\usepackage{float}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+
+\usepackage{tikz}
+\usetikzlibrary{cd}
+\usepackage{diagram}
+\usepackage[all]{xypic}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{aexample}[theorem]{Abstract Example}
+\newtheorem{cexample}[theorem]{Concrete Example}
+\newtheorem*{idea}{Idea}
+\newtheorem*{note}{Note}
+
+\DeclareMathOperator{\obj}{obj}
+\DeclareMathOperator{\Mor}{Mor}
+
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\op}{\text{op}}
+
+\setlength{\parskip}{1mm}
+\setlength{\parindent}{0mm}
+
+\title{Introduction to Categories}
+
+\author{Sanketh Menda\\
+  University of Waterloo}
+
+\date{June 8, 2018}
+
+\begin{document}
+
+\maketitle
+
+Some References:
+\begin{enumerate}
+\item Mac Lane, Saunders. Categories for the Working Mathematician.
+\item Baez, John.
+  \href{http://www.math.ucr.edu/home/baez/categories.html}{Categories,
+    Quantization, and Much More.}
+\item Osborne, M. Scott. Basic Homological Algebra. Chapters 1 and 2
+\end{enumerate}
+
+This talk is not going to be on algebraic geometry. It is gonna be on some
+abstract nonsense I wish I knew before I started learning algebraic
+geometry. 
+
+\begin{quote}\it
+  Please feel free to ask questions.
+\end{quote}
+
+Also, I will try to be as concrete as possible and I will mention quantum
+computing at least once in this talk.
+
+\section{First, Some Sets}
+
+The notion of a \emph{set} is not always sufficient. For instance, one
+cannot have a \emph{set of all sets}, due to Russell's paradox.
+
+\subsection{Russell's Paradox}
+
+Let $S$ be the set of all sets. Then
+\begin{equation}
+  A = \{X \in S: S \not\in X\}
+\end{equation}
+is also a valid set. Then notice that for any set $X$,
+\begin{equation}
+  X \in A \iff X \not\in A.
+\end{equation}
+Taking $X = A$, we get
+\begin{equation}
+  A \in A \iff A \not\in A,
+\end{equation}
+which is a contradiction.
+
+\begin{idea}
+  Define something more general than a set.
+\end{idea}
+
+
+\subsection{von Neumann-Bernays-Gödel Set Theory}
+
+To subvert such issues, we need a better theory. In this section, we
+restrict ourselves to what are called ``material set theories,'' which
+means that we think of elements of sets as existing independently of the
+set.
+
+\emph{Von Neumann-Bernays-Gödel set theory} (or NBG) is an extension of
+\href{https://ncatlab.org/nlab/show/ZFC}{ZFC} that includes \emph{proper
+  classes} (defined below).
+
+The objects of NBG are \emph{classes}. If a class $A$ is contained in
+another class $B$, then $A$ is called a \emph{set}. A class that is not a
+set is called a \emph{proper class}.
+
+For the axioms of NBG, see the
+\href{https://ncatlab.org/nlab/show/NBG}{nLab entry for NBG}.
+
+\section{Categories Now}
+
+\begin{quote}
+  \textit{If we try to generalize the heck out of the concept of a group,
+    keeping associativity as a sacred property, we get the notion of a
+    category.}
+
+  \hfill ---John Baez
+\end{quote}
+
+Now that we can talk about all sets at once (using the notion of class),
+let us define the \emph{category of sets}---which I will denote by
+\textsc{Sets}. The \emph{objects} of this \emph{category} are sets and the
+\emph{morphisms} between objects are all the functions between these
+sets. Now let us define categories more generally. (I promise, this will
+get less crazy real soon.)
+
+\begin{definition}
+  A category $\C$ consists of a class of \emph{objects} $\obj \C$ and a set
+  of \emph{morphisms}. Every morphism has a \emph{source} and a
+  \emph{target}. There is a function $\Mor$ which maps each pair $A,B$ of
+  objects to a set $\Mor_\C(A,B)$ of morphisms from $A$ to $B$. We also
+  have a pairing function called \emph{composition}
+  \begin{align}
+    \circ: \Mor(B,C) \times \Mor(A,B) &\to \Mor(A,C) \\
+    (g,f) &\mapsto gf
+  \end{align}
+  which is \emph{associative}; that is, if $f \in \Mor(C,D)$, $g \in
+  \Mor(B,C)$ and $h \in \Mor(A,B)$, then $(fg)h = f(gh)$. Finally, each set
+  $\Mor(A,A)$ has a distinguished element $i_A$ called \emph{identity}
+  which satisfies the unit laws; that is, for every $f \in \Mor(A,B)$
+  \begin{equation}
+    f = fi_A = i_Bf.
+  \end{equation}
+\end{definition}
+
+The important part about categories is that they are associative. We like
+associativity and we care about it!
+
+\begin{note}
+  Morphisms are sometimes called \emph{arrows}.
+\end{note}
+
+\begin{note}
+  What we call $\Mor$ is sometimes called $\text{Hom}$ for a
+  \emph{homomorphism}. But this is bad notation and we will not use it
+  here.
+\end{note}
+
+\begin{table}[H]\label{tab:conc-examples}
+  \centering
+  \begin{tabular}{ccc}
+    & Objects & Morphisms\\\hline
+    \textsc{Grp}& groups & homomorphisms\\
+    \textsc{Vect}& vector spaces & linear maps\\
+     \textsc{Top}& topological spaces & continuous functions\\
+    \textsc{Diff} & smooth manifolds & smooth maps\\
+    \textsc{Ring} &rings & ring homomorphisms\\
+    \textsc{Hilb} &Hilbert spaces & bounded operators\\[2mm]
+  \end{tabular}
+  \caption{A Few Concrete Examples of Categories}
+\end{table}
+
+In all the above examples, the morphisms are a special function, that is
+not always the case. For example, a group is a category where we have one
+object and all the morphisms have inverses (such morphisms are called
+\emph{isomorphisms}.) These morphisms correspond to the elements of the
+group. (This way of looking at groups---as you shall see---turns out to be
+very useful. We will return to this when we talk about category
+representations which are gross generalizations of group
+representations. These super abstract objects actually turn out to be super
+useful in quantum gravity!)
+
+\begin{aexample}
+  Given a category $\C$, define the \emph{opposite category} $\C^\op$ as
+  the category with the same objects but with the arrows
+  reversed. Precisely, $\obj \C^\op = \obj \C$ and $\Mor_{C^\op}(A,B) =
+  \Mor_\C(B,A)$. Also, the composition is reversed, in $C^\op$
+  \begin{equation}
+    f \circ g = gf.
+  \end{equation}
+\end{aexample}
+
+There is something that all the concrete examples in Table
+\ref{tab:conc-examples} have but the other examples does not. The concrete
+examples all look like a category of ``sets with extra structure.'' This
+intuition is formalized using the notion of a concrete category. Don't
+worry looking at the size of this definition. We will see a simpler
+definition once we learn about functors.
+
+\begin{definition}
+  A category $\C$ is called a \emph{concrete category} if it comes equipped
+  with a function $\sigma$ from $\obj \C$ to sets such that:
+  \begin{enumerate}
+  \item For any $A \in \obj \C$, $\sigma(A)$ is a set. This is called the
+    \emph{underlying set} of $A$.
+  \item $\Mor(A,B)$ consists of functions from $\sigma(A)$ to $\sigma(B)$,
+    that is, any $f \in \Mor(A,B)$ is a function from $\sigma(A)$ to
+    $\sigma(B)$.
+  \item Categorical composition is functional composition.
+  \item $i_A$ is the identity map on the set $\sigma(A)$
+  \end{enumerate}
+\end{definition}
+
+The above definition says that a concrete category is kinda like the
+category of sets. We will formalize this next time using functors.
+
+\section{The Relation To Quantum Computing I Promised}
+
+This is just a teaser, for the real deal see the nLab page
+\href{https://ncatlab.org/nlab/show/finite+quantum+mechanics+in+terms+of+dagger-compact+categories}{finite
+  quantum mechanics in terms of dagger-compact categories} and for the ones
+with even more free time
+\begin{quote}
+  John C. Baez. \href{http://math.ucr.edu/home/baez/quantum/}{Quantum Quandaries: A Category-Theoretic Perspective}.
+\end{quote}
+
+Recall \textsc{Hilb}, the category of Hilbert spaces, where the objects are
+Hilbert spaces and the morphisms are bounded linear operators. This already
+looks a lot like finite-dimensional bounded-energy quantum theory. But let
+us take a step back.
+
+Lemme start with a question Bob Coecke asked and answers very well in \href{https://arxiv.org/abs/quant-ph/0510032}{Kindergarten Quantum
+Mechanics}, what do we really need to do quantum computing? When we apply a
+channel to a state we get another state; that is,
+\begin{equation}
+  \xymatrix{
+    \rho \ar[r]^\Phi & \sigma,
+  }
+\end{equation}
+and we can compose such channels
+\begin{equation}
+  \xymatrix{
+    \rho \ar[r]^\Phi & \sigma \ar[r]^\Psi & \xi.
+  }
+\end{equation}
+We also have an identity map. This looks a lot like a category. But this is
+not sufficient. We also want to be able to tensor things together,
+remember, this is important! That is, if we have states $\rho$ and $\sigma$
+we want to be able to create $\rho \otimes \sigma$. For this, we need what
+we in the biz call a
+\href{https://ncatlab.org/nlab/show/monoidal+category}{monoidal category}.
+
+\vspace{4mm}
+I will end here. Next time we will talk about functors and how category
+theory comes into play in algebraic geometry.
+
+
+\end{document}
